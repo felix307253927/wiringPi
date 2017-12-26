@@ -4,8 +4,7 @@
 
 const {
     pinMode, wiringPiSetup, digitalWrite, delay,
-    softPwmWrite, softPwmCreate,
-    OUTPUT
+    softPwmWrite, softPwmCreate, OUTPUT
 } = require('wiring-pi')
 
 const PWMA = 1;
@@ -51,9 +50,9 @@ function main() {
     motor(MOTOR.forward, 50)
     delay(500)
     motor(MOTOR.stop)
-    delay(100)
+    delay(1500)
     motor(MOTOR.back, 50)
-    delay(1000)
+    delay(500)
     motor(MOTOR.stop)
 }
 
