@@ -6,10 +6,14 @@ const wpi = require('wiring-pi')
 
 wpi.wiringPiSetupGpio()
 
-wpi.pinMode(wpi.OUTPUT)
+let pin = 6
 
-setTimeout(()=>{
+wpi.pinMode(pin, wpi.OUTPUT)
+
+
+while (1){
     wpi.digitalWrite(6, 1)
     wpi.delay(500)
     wpi.digitalWrite(6, 0)
-}, 500)
+    wpi.delay(500)
+}
