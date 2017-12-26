@@ -1,0 +1,25 @@
+{
+  "name": "raspi-io",
+  "version": "8.1.0",
+  "description": "Raspberry Pi 3B",
+  "main": "dist/index.js",
+  "keywords": [
+    "raspberrypi",
+    "nodebots",
+    "robots"
+  ],
+  "engines": {
+    "node": ">= 4.0.0"
+  },
+  "cpu": [],
+  "scripts": {
+    "test": "node ./test/bootstrap.js",
+    "install":"node-gyp rebuild",
+    "prebuild": "eslint src/**/*.js",
+    "build": "babel src/index.js --presets es2015 --out-file dist/index.js --source-maps"
+  },
+  "author": "felix",
+  "contributors": [
+  ],
+  "license": "MIT"
+}
