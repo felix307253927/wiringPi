@@ -5,7 +5,7 @@
 
 #define PIN_BASE 300
 #define MAX_PWM 4096
-#define HERTZ 50
+#define HERTZ 60
 #define max(x,y) ((x)>(y)? (x):(y))
 #define min(x,y) ((x)<(y)? (x):(y))
 
@@ -15,23 +15,21 @@
 int calcTicks(float impulseMs, int hertz)
 {
 	float cycleMs = 1000.0f / hertz;
-	return (int)(MAX_PWM * impulseMs / cycleMs + 0.5f);
+	return (int)(MAX_PWM * impulseMs / cycleMs);
 }
 
-void myPwmWrite(int servonum, float x)
+void myPwmWrite(int servonum, float x, int offset)
 {
   float y;
   int tick;
   y=x/90.0+0.5;
   y=max(y,0.5);
   y=min(y,2.5);
-  tick = calcTicks(y, HERTZ);
-  printf("myPwmWrite----\n");
-  pwmWrite(PIN_BASE+servonum,tick);
+  tick = calcTicks(y, HERTZ) + offset;
+  pwmWrite(PIN_BASE+servonum, tick);
 }
 
 int myPwmSetup(void){
-    printf("initPwm---> 300\n");
     int fd = pca9685Setup(PIN_BASE, 0x40, HERTZ);
     if(fd<0){
         return fd;
@@ -39,4 +37,6 @@ int myPwmSetup(void){
     pca9685PWMReset(fd);
     return fd;
 }
+
+
 

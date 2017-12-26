@@ -2,7 +2,16 @@
   "targets":[
     {
         "target_name":"hello",
-        "sources":["hello.cc"]
+        "sources":[
+            "pca9685.c",
+            "servo.c",
+            "hello.cc"
+        ],
+        "conditions":[
+            ['OS=="linux"',{
+                "libraries":["-lwiringPi"]
+            }]
+        ]
     }
   ]
 }
