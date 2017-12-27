@@ -14,12 +14,14 @@
   "cpu": [],
   "scripts": {
     "test": "node ./test/bootstrap.js",
-    "install":"node-gyp rebuild",
+    "install": "node-gyp rebuild",
     "prebuild": "eslint src/**/*.js",
     "build": "babel src/index.js --presets es2015 --out-file dist/index.js --source-maps"
   },
   "author": "felix",
-  "contributors": [
-  ],
-  "license": "MIT"
+  "contributors": [],
+  "license": "MIT",
+  "dependencies": {
+    "ws": "^3.3.3"
+  }
 }
