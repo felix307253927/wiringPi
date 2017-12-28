@@ -13,7 +13,7 @@ const LEDALL_ON_L = 0x6
 
 function calcTicks( impulseMs, hertz) {
     let cycleMs = 1000 / hertz;
-    return (MAX_PWM * impulseMs / cycleMs);
+    return parseInt(MAX_PWM * impulseMs / cycleMs);
 }
 
 
