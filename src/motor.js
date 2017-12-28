@@ -3,7 +3,7 @@
  */
 
 const {
-    pinMode, wiringPiSetup, digitalWrite, delay,
+    pinMode, digitalWrite, delay,
     softPwmWrite, softPwmCreate, OUTPUT
 } = require('wiring-pi')
 
@@ -21,7 +21,6 @@ class Motor {
     }
 
     init() {
-        wiringPiSetup()
         pinMode(PWMA, OUTPUT)
         pinMode(AIN1, OUTPUT)
         pinMode(AIN2, OUTPUT)

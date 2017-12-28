@@ -2,7 +2,7 @@
  * Created by Administrator on 2017/12/28.
  */
 const {
-    wiringPiSetup, pwmWrite, delay, OUTPUT, pca9685Setup,
+    pwmWrite, pca9685Setup,
     wiringPiI2CWriteReg16
 } = require('wiring-pi')
 
@@ -19,7 +19,6 @@ function calcTicks( impulseMs, hertz) {
 
 class Servo {
     constructor(){
-        wiringPiSetup()
         this.init()
     }
 
@@ -30,9 +29,9 @@ class Servo {
         wiringPiI2CWriteReg16(fd, LEDALL_ON_L+2, 0x1000);
     }
 
-    pwmWrite(num, x, offset){
+    pwmWrite(num, deg, offset=25){
         let y, tick;
-        y=x/90.0+0.5;
+        y=deg/90.0+0.5;
         y=Math.max(y,0.5);
         y=Math.min(y,2.5);
         tick = calcTicks(y, HZ) + offset;
@@ -42,10 +41,10 @@ class Servo {
 
 module.exports = Servo
 
-let srv = new Servo()
+/*let srv = new Servo()
 
 srv.pwmWrite(0, 180, 25)
 delay(500)
 srv.pwmWrite(1, 0, 40)
 srv.pwmWrite(2, 90, 40)
-console.log(123)
+console.log(123)*/

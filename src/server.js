@@ -5,23 +5,26 @@
 'use strict';
 const http = require('http')
 const IO = require('socket.io');
-const Motor =require('./motor')
-const server = http.createServer()
+const Car = require('./car')
+const server = http.createServer();
 
 const io = new IO(server);
-const motor = new Motor(30);
+const car = new Car(30);
 
 io.on('connection', function connection(socket) {
-  socket.on('message', function (message) {
-    console.log('received: %s', message);
-    socket.send('message has received')
-  });
-  socket.send('something');
+    socket.on('message', function (message) {
+        console.log('received: %s', message);
+        socket.send('message has received')
+    });
+    socket.send('something');
 
-  socket.on('motor', function (cmd, speed) {
-    motor.ctrl(cmd, speed)
-    //   console.log(cmd)
-  })
+    socket.on('motor', function (cmd, speed) {
+        car.motorCmd(cmd, speed)
+        //   console.log(cmd)
+    })
+    socket.on('servo', function (num, deg) {
+        car.servoCmd(num, deg)
+    })
 
 });
 
