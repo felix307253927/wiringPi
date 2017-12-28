@@ -44,7 +44,8 @@ module.exports = Servo
 
 let srv = new Servo()
 
-srv.pwmWrite(0, 90, 25)
+srv.pwmWrite(0, 180, 25)
 delay(500)
-srv.pwmWrite(1, 90, 50)
+srv.pwmWrite(1, 0, 40)
+srv.pwmWrite(2, 90, 40)
 console.log(123)
