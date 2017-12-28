@@ -70,7 +70,7 @@ class Motor {
                 this.move([1, 0, 1, 0], this.speed, this.speed / 2);
                 break;
             case 'speed':
-                this.speed = speed;
+                this.speed = +speed||0;
                 break;
             case 'stop':
             default:
