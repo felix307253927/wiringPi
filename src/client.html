@@ -5,30 +5,66 @@
   <title>client</title>
 </head>
 <body>
-<input id="msg" type="text">&nbsp;
-<button id="send">send</button>
-<script src="/socket.io/socket.io.js"></script>
-<script>
-  const ws = new WebSocket('ws://192.168.6.155:8086')
-  let msg  = document.getElementById('msg');
-  let send = document.getElementById('send');
+方向键发送命令
 
-  ws.addEventListener('open', function () {
-    console.log('open')
-    msg.addEventListener('keyup', function (e) {
-      if (e.keyCode === 13) {
-        ws.send(msg.value)
-        msg.value = ''
+
+<script src="socket.io_client.js"></script>
+<script>
+  const ws = io.connect('ws://192.168.1.109:8086')
+  let _timer, keyPress = {};
+
+  function getCmd() {
+      let cmd ='';
+      if(keyPress[38]){
+          cmd = 'F'
+      } else if(keyPress[40]){
+          cmd = 'B'
       }
-    })
-    send.addEventListener('click', function (e) {
-      ws.send(msg.value)
-      msg.value = ''
-    })
+      if(keyPress[37]){
+          cmd+='L'
+      } else if(keyPress[39]){
+          cmd+='R'
+      }
+      return cmd
+  }
+
+  ws.on('connect', function () {
+    console.log('connect')
+      clearInterval(_timer)
+      _timer = setInterval(function () {
+          let cmd = getCmd();
+          if(cmd){
+              console.log(cmd)
+              ws.emit('motor', cmd)
+          }
+      }, 0)
   })
 
-  ws.addEventListener('message', function (m) {
-    console.log('get server message---->:', m)
+  ws.on('disconnect', function () {
+      clearInterval(_timer)
+  })
+
+  ws.on('error', function () {
+      clearInterval(_timer)
+  })
+
+  ws.on('message',function(data){
+      console.log(data);
+  })
+
+  document.body.addEventListener('keydown',function ({keyCode}) {
+      if(keyCode>=37 && keyCode<=40){
+          keyPress[keyCode] = true;
+//          sendCmd()
+      }
+  }, true)
+  document.body.addEventListener('keyup',function ({keyCode}) {
+      if(keyCode>=37 && keyCode<=40){
+          keyPress[keyCode] = false;
+          if(!getCmd()){
+              console.log('stop')
+          }
+      }
   })
 </script>
 </body>

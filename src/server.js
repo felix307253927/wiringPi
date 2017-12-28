@@ -5,10 +5,11 @@
 'use strict';
 const http = require('http')
 const IO = require('socket.io');
-
+const Motor =require('./motor')
 const server = http.createServer()
 
 const io = new IO(server);
+const motor = new Motor(30);
 
 io.on('connection', function connection(socket) {
   socket.on('message', function (message) {
@@ -16,6 +17,11 @@ io.on('connection', function connection(socket) {
     socket.send('message has received')
   });
   socket.send('something');
+
+  socket.on('motor', function (cmd) {
+    motor.ctrl(cmd)
+    //   console.log(cmd)
+  })
 });
 
 server.listen(8086)

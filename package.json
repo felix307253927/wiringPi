@@ -22,6 +22,5 @@
   "contributors": [],
   "license": "MIT",
   "dependencies": {
-    "ws": "^3.3.3"
   }
 }
