@@ -1,7 +1,8 @@
 
+###servo info
 
-----Name----offset
+----Name----offset----range
 
-    pwm0    25
-    pwm1    50
-    pwm2    50
+    pwm0    25    [0~180]
+    pwm1    50    [0~180]
+    pwm2    50    [0~120]
