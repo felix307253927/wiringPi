@@ -3,14 +3,22 @@
  * @email   307253927@qq.com
  */
 'use strict';
-const WebSocket = require('ws')
+const http = require('http')
+const IO = require('socket.io');
 
-const ws = new WebSocket.Server({ port: 8080 });
+const server = http.createServer()
 
-ws.on('connection', function connection(socket) {
+const io = new IO(server);
+
+io.on('connection', function connection(socket) {
   socket.on('message', function (message) {
     console.log('received: %s', message);
+    socket.send('message has received')
   });
   socket.send('something');
 });
+
+server.listen(8086)
+
+console.log('websocket run')
 

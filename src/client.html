@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>client</title>
+</head>
+<body>
+<input id="msg" type="text">&nbsp;
+<button id="send">send</button>
+<script src="/socket.io/socket.io.js"></script>
+<script>
+  const ws = new WebSocket('ws://192.168.6.155:8086')
+  let msg  = document.getElementById('msg');
+  let send = document.getElementById('send');
+
+  ws.addEventListener('open', function () {
+    console.log('open')
+    msg.addEventListener('keyup', function (e) {
+      if (e.keyCode === 13) {
+        ws.send(msg.value)
+        msg.value = ''
+      }
+    })
+    send.addEventListener('click', function (e) {
+      ws.send(msg.value)
+      msg.value = ''
+    })
+  })
+
+  ws.addEventListener('message', function (m) {
+    console.log('get server message---->:', m)
+  })
+</script>
+</body>
+</html>
