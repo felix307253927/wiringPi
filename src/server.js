@@ -18,8 +18,8 @@ io.on('connection', function connection(socket) {
   });
   socket.send('something');
 
-  socket.on('motor', function (cmd) {
-    motor.ctrl(cmd)
+  socket.on('motor', function (cmd, speed) {
+    motor.ctrl(cmd, speed)
     //   console.log(cmd)
   })
 
