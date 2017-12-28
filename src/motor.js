@@ -43,7 +43,7 @@ class Motor {
         softPwmWrite(PWMB, Bspeed);
     }
 
-    ctrl(cmd) {
+    ctrl(cmd, speed=30) {
         switch (cmd) {
             case 'F':
                 this.move([0, 1, 0, 1]);
@@ -69,10 +69,12 @@ class Motor {
             case 'BR':
                 this.move([1, 0, 1, 0], this.speed, this.speed / 2);
                 break;
+            case 'speed':
+                this.speed = speed;
+                break;
             case 'stop':
             default:
                 this.move([0, 0, 0, 0], 0, 0)
-                console.log('stop')
         }
     }
 }

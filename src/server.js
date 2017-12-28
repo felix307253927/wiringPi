@@ -22,6 +22,7 @@ io.on('connection', function connection(socket) {
     motor.ctrl(cmd)
     //   console.log(cmd)
   })
+
 });
 
 server.listen(8086)
