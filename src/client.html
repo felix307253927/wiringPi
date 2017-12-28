@@ -64,6 +64,7 @@
           keyPress[keyCode] = false;
           if(!getCmd()){
               console.log('stop')
+              ws.emit('motor', 'stop')
           }
       }
   })

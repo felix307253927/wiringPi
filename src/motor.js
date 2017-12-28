@@ -69,8 +69,10 @@ class Motor {
             case 'BR':
                 this.move([1, 0, 1, 0], this.speed, this.speed / 2);
                 break;
+            case 'stop':
             default:
                 this.move([0, 0, 0, 0], 0, 0)
+                console.log('stop')
         }
     }
 }
