@@ -22,5 +22,7 @@
   "contributors": [],
   "license": "MIT",
   "dependencies": {
+    "socket.io": "^2.0.4",
+    "wiring-pi": "^2.2.1"
   }
 }
