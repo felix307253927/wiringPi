@@ -13,6 +13,14 @@ class Car {
     this.servo = new Servo();
   }
   
+  get speed() {
+    return this.motor.speed
+  }
+  
+  set speed(v) {
+    this.motor.speed = v;
+  }
+  
   motorCmd(cmd, speed) {
     this.motor.ctrl(cmd, speed);
   }

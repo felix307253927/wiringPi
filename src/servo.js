@@ -22,12 +22,12 @@ function calcTicks(impulseMs, hertz) {
 
 function addDeg(deg, step = 1) {
   deg += step
-  return deg < 180 ? deg : 180
+  return deg < MAX ? deg : MAX
 }
 
 function subDeg(deg, step = 1) {
   deg -= step
-  return deg > 0 ? deg : 0
+  return deg > MIN ? deg : MIN
 }
 
 class Servo {
@@ -37,9 +37,9 @@ class Servo {
     this.servo2 = 0;  //初始化摄像头上下舵机
     this.step   = 0.5;
     this.init()
-    this.pwmWrite(0, this.servo0);
-    this.pwmWrite(1, this.servo1, 40)
-    this.pwmWrite(2, this.servo2, 40)
+    this.pwmWrite(SERVO0, this.servo0);
+    this.pwmWrite(SERVO1, this.servo1, 40)
+    this.pwmWrite(SERVO2, this.servo2, 40)
   }
   
   init() {

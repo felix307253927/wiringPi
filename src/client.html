@@ -5,20 +5,17 @@
   <title>client</title>
 </head>
 <body>
-方向键发送命令
-<input id="speed" type="text" value="30">
+speed <input id="speed" type="number" value="0">
+w a s d 方向 - +
 
 <script src="socket.io_client.js"></script>
 <script>
-  let speed    = document.getElementById('speed');
-  speed.onblur = function () {
-    ws.emit('motor', 'speed', speed.value)
-  }
-  const ws     = io.connect('ws://192.168.6.155:8086')
+  let sp   = document.getElementById('speed')
+  const ws = io.connect('ws://192.168.6.155:8086')
   //  const ws = io.connect('ws://192.168.1.109:8086')
   //  const ws = io.connect('ws://192.168.1.109:8086')
   //  const ws             = io.connect('ws://192.168.1.108:8086')
-  let _timer, keyPress = {};
+  let _timer, speed = 0, keyPress = {}, lastMotorCmd = '', lastCameraCmd = '';
 
   function getMotorCmd() {
     let cmd = '';
@@ -59,30 +56,29 @@
       for (let k in keyPress) {
         keyPress[k] = false;
       }
-    } else if (type === 'motor') {
-      keyPress[87] = keyPress[83] = keyPress[65] = keyPress[68] = false;
-    } else if (type === 'camera') {
-      for (let k = 37; k <= 40; k++) {
-        keyPress[k] = false;
-      }
+      ws.emit('motor', 'stop')
+      ws.emit('camera', 'stop')
     }
-    console.log('stop', type)
   }
 
   ws.on('connect', function () {
-    console.log('connect')
     clearInterval(_timer)
     _timer = setInterval(function () {
       let cmd    = getMotorCmd();
       let camera = getCameraCmd();
-      if (cmd) {
-        ws.emit('motor', cmd)
+      if (cmd !== lastMotorCmd) {
+        lastMotorCmd = cmd;
+        ws.emit('motor', cmd || 'stop')
       }
-      if (camera) {
-        console.log(camera)
-        ws.emit('camera', camera)
+      if (camera !== lastCameraCmd) {
+        lastCameraCmd = camera;
+        ws.emit('camera', camera || 'stop')
       }
-    }, 0)
+    }, 20)
+  })
+
+  ws.on('car', function (car) {
+    speed = sp.value = car.speed || 0;
   })
 
   ws.on('disconnect', function () {
@@ -111,6 +107,18 @@
       case 40:
         keyPress[keyCode] = true;
         break;
+      case 189:
+        speed -= 5
+        speed < 0 && (speed = 0);
+        sp.value = speed
+        break;
+      case 187:
+        speed += 5
+        speed > 100 && (speed = 100);
+        sp.value = speed
+        break;
+      default:
+        break;
     }
   }, true)
   document.body.addEventListener('keyup', function ({keyCode}) {
@@ -119,20 +127,21 @@
       case 65:
       case 83:
       case 87:
-        keyPress[keyCode] = false;
-        if (!getMotorCmd()) {
-          stop('motor');
-        }
-        break;
       case 37:  //控制摄像头
       case 38:
       case 39:
       case 40:
         keyPress[keyCode] = false;
-        stop('camera');
         break;
       case 32:
         stop();
+        break;
+      case 189:
+      case 187:
+        sp.value = speed
+        ws.emit('motor', 'speed', speed)
+        break;
+      default:
         break;
     }
   })

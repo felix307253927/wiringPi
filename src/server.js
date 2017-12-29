@@ -10,16 +10,18 @@ const server = http.createServer();
 
 const io = new IO(server);
 // const car = new Car(30);
-
 io.on('connection', function connection(socket) {
   socket.send('connected!');
   socket.on('message', function (message) {
     console.log('received: %s', message);
   });
+  socket.emit('car', {
+    // speed: car.speed
+  })
   // car.motorCmd('stop', 0);
   socket.on('motor', function (cmd, speed) {
     // car.motorCmd(cmd, speed)
-    console.log('motor', cmd)
+    console.log('motor', cmd, speed || 0)
   })
   socket.on('camera', function (cmd) {
     // car.camaraCtrl(cmd)
