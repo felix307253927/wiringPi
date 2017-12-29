@@ -12,8 +12,12 @@ const PIN_BASE = 300
 const LEDALL_ON_L = 0x6
 const MIN = 0;
 const MAX = 180;
+const SERVO0 = 0;
+const SERVO1 = 1;
+const SERVO2 = 2;
 
-const SERVO0 = 0, SERVO1 = 1, SERVO2 = 2;
+const OF0 = 25;
+const OF1 = 40;
 
 function calcTicks(impulseMs, hertz) {
   let cycleMs = 1000 / hertz;
@@ -32,16 +36,16 @@ function subDeg(deg, step = 1) {
 
 class Servo {
   constructor() {
-    this.servo0 = 90; //初始化摄像头左右舵机
+    this.servo0 = 90; //初始化超声波左右舵机
     this.servo1 = 90; //初始化摄像头左右舵机
     this.servo2 = 0;  //初始化摄像头上下舵机
     this.step = 2;
     this.stop = true;
     this.cmd = 'stop';
     this.init()
-    this.pwmWrite(SERVO0, this.servo0);
-    this.pwmWrite(SERVO1, this.servo1, 40)
-    this.pwmWrite(SERVO2, this.servo2, 40)
+    this.pwmWrite(SERVO0, this.servo0, OF0);
+    this.pwmWrite(SERVO1, this.servo1, OF1)
+    this.pwmWrite(SERVO2, this.servo2, OF1)
     this.run();
   }
 
@@ -52,21 +56,21 @@ class Servo {
     wiringPiI2CWriteReg16(fd, LEDALL_ON_L + 2, 0x1000);
   }
 
-  run(){
+  run() {
     setInterval(() => {
       if (!this.stop) {
         switch (this.cmd) {
           case 'U':
-            this.pwmWrite(SERVO2, (this.servo2 = addDeg(this.servo2, this.step)));
+            this.pwmWrite(SERVO2, (this.servo2 = addDeg(this.servo2, this.step)), OF1);
             break;
           case 'D':
-            this.pwmWrite(SERVO2, (this.servo2 = subDeg(this.servo2, this.step)));
+            this.pwmWrite(SERVO2, (this.servo2 = subDeg(this.servo2, this.step)), OF1);
             break;
           case 'L':
-            this.pwmWrite(SERVO1, (this.servo1 = addDeg(this.servo1, this.step)));
+            this.pwmWrite(SERVO1, (this.servo1 = addDeg(this.servo1, this.step)), OF1);
             break;
           case 'R':
-            this.pwmWrite(SERVO1, (this.servo1 = subDeg(this.servo1, this.step)));
+            this.pwmWrite(SERVO1, (this.servo1 = subDeg(this.servo1, this.step)), OF1);
             break;
           case 'stop':
           default:
@@ -77,7 +81,7 @@ class Servo {
     }, 50)
   }
 
-  pwmWrite(num, deg, offset = 25) {
+  pwmWrite(num, deg, offset = OF0) {
     let y, tick;
     y = deg / 90.0 + 0.5;
     y = Math.max(y, 0.5);
