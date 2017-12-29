@@ -35,13 +35,14 @@ class Servo {
     this.servo0 = 90; //初始化摄像头左右舵机
     this.servo1 = 90; //初始化摄像头左右舵机
     this.servo2 = 0;  //初始化摄像头上下舵机
-    this.step = 1;
+    this.step = 2;
     this.stop = true;
     this.cmd = 'stop';
     this.init()
     this.pwmWrite(SERVO0, this.servo0);
     this.pwmWrite(SERVO1, this.servo1, 40)
     this.pwmWrite(SERVO2, this.servo2, 40)
+    this.run();
   }
 
   init() {
@@ -87,6 +88,7 @@ class Servo {
 
   cameraCtrl(cmd) {
     this.cmd = cmd;
+    this.stop = false;
   }
 }
 
