@@ -29,3 +29,5 @@ class Car {
     this.servo.cameraCtrl(cmd);
   }
 }
+
+module.exports = Car;
