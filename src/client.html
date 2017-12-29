@@ -10,66 +10,131 @@
 
 <script src="socket.io_client.js"></script>
 <script>
-  let speed = document.getElementById('speed');
+  let speed    = document.getElementById('speed');
   speed.onblur = function () {
-      ws.emit('motor', 'speed', speed.value)
+    ws.emit('motor', 'speed', speed.value)
   }
-
-//  const ws = io.connect('ws://192.168.1.109:8086')
-  const ws = io.connect('ws://192.168.1.108:8086')
+  const ws     = io.connect('ws://192.168.6.155:8086')
+  //  const ws = io.connect('ws://192.168.1.109:8086')
+  //  const ws = io.connect('ws://192.168.1.109:8086')
+  //  const ws             = io.connect('ws://192.168.1.108:8086')
   let _timer, keyPress = {};
 
-  function getCmd() {
-      let cmd ='';
-      if(keyPress[38]){
-          cmd = 'F'
-      } else if(keyPress[40]){
-          cmd = 'B'
+  function getMotorCmd() {
+    let cmd = '';
+    if (keyPress[87]) {
+      cmd = 'F'
+    } else if (keyPress[83]) {
+      cmd = 'B'
+    }
+    if (keyPress[65]) {
+      cmd += 'L'
+    } else if (keyPress[68]) {
+      cmd += 'R'
+    }
+    return cmd
+  }
+
+  function getCameraCmd() {
+    let cmd = '';
+    switch (true) {
+      case keyPress[37]:
+        cmd = 'L';
+        break;
+      case keyPress[38]:
+        cmd = 'U';
+        break;
+      case keyPress[39]:
+        cmd = 'R';
+        break;
+      case keyPress[40]:
+        cmd = 'D';
+        break;
+    }
+    return cmd;
+  }
+
+  function stop(type) {
+    if (!type) {
+      for (let k in keyPress) {
+        keyPress[k] = false;
       }
-      if(keyPress[37]){
-          cmd+='L'
-      } else if(keyPress[39]){
-          cmd+='R'
+    } else if (type === 'motor') {
+      keyPress[87] = keyPress[83] = keyPress[65] = keyPress[68] = false;
+    } else if (type === 'camera') {
+      for (let k = 37; k <= 40; k++) {
+        keyPress[k] = false;
       }
-      return cmd
+    }
+    console.log('stop', type)
   }
 
   ws.on('connect', function () {
     console.log('connect')
-      clearInterval(_timer)
-      _timer = setInterval(function () {
-          let cmd = getCmd();
-          if(cmd){
-              ws.emit('motor', cmd)
-          }
-      }, 0)
+    clearInterval(_timer)
+    _timer = setInterval(function () {
+      let cmd    = getMotorCmd();
+      let camera = getCameraCmd();
+      if (cmd) {
+        ws.emit('motor', cmd)
+      }
+      if (camera) {
+        console.log(camera)
+        ws.emit('camera', camera)
+      }
+    }, 0)
   })
 
   ws.on('disconnect', function () {
-      clearInterval(_timer)
+    clearInterval(_timer);
+    stop();
   })
 
   ws.on('error', function () {
-      clearInterval(_timer)
+    clearInterval(_timer);
+    stop();
   })
 
-  ws.on('message',function(data){
-      console.log(data);
+  ws.on('message', function (data) {
+    console.log(data);
   })
 
-  document.body.addEventListener('keydown',function ({keyCode}) {
-      if(keyCode>=37 && keyCode<=40){
-          keyPress[keyCode] = true;
-      }
+  document.body.addEventListener('keydown', function ({keyCode}) {
+    switch (keyCode) {
+      case 68:  //控制电机
+      case 65:
+      case 83:
+      case 87:
+      case 37:  //控制摄像头
+      case 38:
+      case 39:
+      case 40:
+        keyPress[keyCode] = true;
+        break;
+    }
   }, true)
-  document.body.addEventListener('keyup',function ({keyCode}) {
-      if(keyCode>=37 && keyCode<=40){
-          keyPress[keyCode] = false;
-          if(!getCmd()){
-              console.log('stop')
-              ws.emit('motor', 'stop')
-          }
-      }
+  document.body.addEventListener('keyup', function ({keyCode}) {
+    switch (keyCode) {
+      case 68:
+      case 65:
+      case 83:
+      case 87:
+        keyPress[keyCode] = false;
+        if (!getMotorCmd()) {
+          stop('motor');
+        }
+        break;
+      case 37:  //控制摄像头
+      case 38:
+      case 39:
+      case 40:
+        keyPress[keyCode] = false;
+        stop('camera');
+        break;
+      case 32:
+        stop();
+        break;
+    }
   })
 </script>
 </body>
