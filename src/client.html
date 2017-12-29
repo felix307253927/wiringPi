@@ -140,10 +140,9 @@
 <script>
   let sp     = document.getElementById('speed'),
       keyMap = {w: 87, a: 65, s: 83, d: 68, sub: 189, add: 187, up: 38, left: 37, down: 40, right: 39};
-  const ws   = io.connect('ws://192.168.6.155:8086')
+//  const ws   = io.connect('ws://192.168.6.155:8086')
   //  const ws = io.connect('ws://192.168.1.109:8086')
-  //  const ws = io.connect('ws://192.168.1.109:8086')
-  //  const ws             = io.connect('ws://192.168.1.108:8086')
+    const ws             = io.connect('ws://192.168.1.106:8086')
   let _timer, speed = 0, keyPress = {}, lastMotorCmd = '', lastCameraCmd = '';
 
   function getMotorCmd() {

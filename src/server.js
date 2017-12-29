@@ -4,27 +4,30 @@
  */
 'use strict';
 const http   = require('http')
+const fs = require('fs')
 const IO     = require('socket.io');
-// const Car = require('./car')
-const server = http.createServer();
+const Car = require('./car')
+const server = http.createServer(function (req, res) {
+    fs.createReadStream(__dirname+'/client.html').pipe(res)
+});
 
 const io = new IO(server);
-// const car = new Car(30);
+const car = new Car(30);
 io.on('connection', function connection(socket) {
   socket.send('connected!');
   socket.on('message', function (message) {
     console.log('received: %s', message);
   });
   socket.emit('car', {
-    // speed: car.speed
+    speed: car.speed
   })
   // car.motorCmd('stop', 0);
   socket.on('motor', function (cmd, speed) {
-    // car.motorCmd(cmd, speed)
+    car.motorCmd(cmd, speed)
     console.log('motor', cmd, speed || 0)
   })
   socket.on('camera', function (cmd) {
-    // car.camaraCtrl(cmd)
+    car.camaraCtrl(cmd)
     console.log('camera', cmd)
   })
   
