@@ -39,7 +39,7 @@ class Servo {
     this.servo0 = 90; //初始化超声波左右舵机
     this.servo1 = 90; //初始化摄像头左右舵机
     this.servo2 = 0;  //初始化摄像头上下舵机
-    this.step = 2;
+    this.step = 5;
     this.stop = true;
     this.cmd = 'stop';
     this.init()
