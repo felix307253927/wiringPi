@@ -2,16 +2,145 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>client</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0,user-scalable=no">
+  <title>car</title>
+  <script>
+    let DPR    = window.devicePixelRatio || 1,
+        html   = document.documentElement,
+        height = window.innerHeight,
+        width  = window.innerWidth,
+        wh     = 667 / 375;
+    if (width / height < wh) {
+      height = width / wh;
+    }
+    if (html) {
+      html.style.fontSize = height * DPR / 750 * (75 / DPR) + 'px'
+    }
+  </script>
+  <style>
+    html, body {
+      padding: 0;
+      margin: 0;
+      overflow: hidden;
+    }
+
+    body {
+      text-align: center;
+      user-select: none;
+    }
+
+    .main {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: center;
+      height: 10rem;
+      width: 17.787rem;
+    }
+
+    .speed {
+      position: absolute;
+      width: 1.56rem;
+      height: 0.933rem;
+      line-height: 1;
+      font-size: 0.933rem;
+      padding: 0;
+      text-align: center;
+      top: 0.1333rem;
+      color: darkgreen;
+      opacity: .7;
+    }
+
+    .key {
+      display: inline-flex;
+      width: 0.933rem;
+      height: 0.933rem;
+      border: 1px solid #ddd;
+      border-radius: 0.1rem;
+      align-items: center;
+      justify-content: center;
+      margin: 0.0533rem;
+      font-size: 24px;
+      text-align: center;
+    }
+
+    .key-panel {
+      width: 3.56rem;
+      height: 3.56rem;
+      /*border: 1px solid;*/
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .key-panel .lr {
+      display: flex;
+      flex-direction: row;
+      flex-shrink: 0;
+    }
+
+    .video {
+      width: 10.666rem;
+      height: 8rem;
+      /*border: 1px solid;*/
+      flex-shrink: 0;
+    }
+
+    .key.empty {
+      border: 0;
+    }
+
+    .key.sp {
+      width: 0.5333rem;
+      height: 0.5333rem;
+    }
+
+    .key.active{
+      outline: 0;
+      box-shadow: inset 0 0 5px 2px rgba(0,0,0,.125);
+    }
+
+    .sp-group {
+      display: flex;
+      width: 100%;
+      justify-content: space-around;
+      flex-wrap: nowrap;
+    }
+  </style>
 </head>
 <body>
-speed <input id="speed" type="number" value="0">
-w a s d 方向 - +
-
+<span class="speed" id="speed"></span>
+<div class="main">
+  <div class="key-panel">
+    <div id="w" class="key">W</div>
+    <div class="lr">
+      <div id="a" class="key">A</div>
+      <div class="key empty"></div>
+      <div id="d" class="key">D</div>
+    </div>
+    <div id="s" class="key">S</div>
+  </div>
+  <div class="video"></div>
+  <div class="key-panel">
+    <div class="sp-group">
+      <div id="sub" class="key sp">-</div>
+      <div id="up" class="key">↑</div>
+      <div id="add" class="key sp">+</div>
+    </div>
+    <div class="lr">
+      <div id="left" class="key">←</div>
+      <div class="key empty"></div>
+      <div id="right" class="key">→</div>
+    </div>
+    <div id="down" class="key">↓</div>
+  </div>
+</div>
 <script src="socket.io_client.js"></script>
 <script>
-  let sp   = document.getElementById('speed')
-  const ws = io.connect('ws://192.168.6.155:8086')
+  let sp     = document.getElementById('speed'),
+      keyMap = {w: 87, a: 65, s: 83, d: 68, sub: 189, add: 187, up: 38, left: 37, down: 40, right: 39};
+  const ws   = io.connect('ws://192.168.6.155:8086')
   //  const ws = io.connect('ws://192.168.1.109:8086')
   //  const ws = io.connect('ws://192.168.1.109:8086')
   //  const ws             = io.connect('ws://192.168.1.108:8086')
@@ -61,6 +190,47 @@ w a s d 方向 - +
     }
   }
 
+  function speedAdd() {
+    speed += 5
+    speed > 100 && (speed = 100);
+    sp.innerHTML = speed
+  }
+
+  function speedSub() {
+    speed -= 5
+    speed < 0 && (speed = 0);
+    sp.innerHTML = speed
+  }
+
+  function initKeyEvent() {
+    for (let k in keyMap) {
+      let el          = document.getElementById(k)
+      el.ontouchstart = function (e) {
+        e.preventDefault();
+        el.classList.add('active')
+        let code = keyMap[k];
+        if (code === 189) {
+          speedSub();
+        } else if (code === 187) {
+          speedAdd();
+        } else {
+          keyPress[code] = true;
+        }
+      };
+      el.ontouchend   = function (e) {
+        e.preventDefault();
+        el.classList.remove('active')
+        let code = keyMap[k];
+        if (code === 189 || code === 187) {
+          sp.innerHTML = speed
+          ws.emit('motor', 'speed', speed)
+        } else {
+          keyPress[code] = false;
+        }
+      }
+    }
+  }
+
   ws.on('connect', function () {
     clearInterval(_timer)
     _timer = setInterval(function () {
@@ -78,7 +248,7 @@ w a s d 方向 - +
   })
 
   ws.on('car', function (car) {
-    speed = sp.value = car.speed || 0;
+    speed = sp.innerHTML = car.speed || 0;
   })
 
   ws.on('disconnect', function () {
@@ -94,7 +264,7 @@ w a s d 方向 - +
   ws.on('message', function (data) {
     console.log(data);
   })
-
+  initKeyEvent();
   document.body.addEventListener('keydown', function ({keyCode}) {
     switch (keyCode) {
       case 68:  //控制电机
@@ -108,14 +278,10 @@ w a s d 方向 - +
         keyPress[keyCode] = true;
         break;
       case 189:
-        speed -= 5
-        speed < 0 && (speed = 0);
-        sp.value = speed
+        speedSub();
         break;
       case 187:
-        speed += 5
-        speed > 100 && (speed = 100);
-        sp.value = speed
+        speedAdd();
         break;
       default:
         break;
@@ -138,7 +304,7 @@ w a s d 方向 - +
         break;
       case 189:
       case 187:
-        sp.value = speed
+        sp.innerHTML = speed
         ws.emit('motor', 'speed', speed)
         break;
       default:
