@@ -35,11 +35,11 @@ class Motor {
     move(direction, Aspeed = this.speed, Bspeed = this.speed) {
         digitalWrite(AIN2, direction[0]);
         digitalWrite(AIN1, direction[1]);
-        softPwmWrite(PWMA, Aspeed);
+        softPwmWrite(PWMA, ~~Aspeed);
 
         digitalWrite(BIN2, direction[2]);
         digitalWrite(BIN1, direction[3]);
-        softPwmWrite(PWMB, Bspeed);
+        softPwmWrite(PWMB, ~~Bspeed);
     }
 
     ctrl(cmd, speed=30) {
@@ -57,16 +57,16 @@ class Motor {
                 this.move([0, 1, 1, 0]);
                 break;
             case 'FL':
-                this.move([0, 1, 0, 1], this.speed / 2, this.speed);
+                this.move([0, 1, 0, 1], this.speed / 3, this.speed);
                 break;
             case 'FR':
-                this.move([0, 1, 0, 1], this.speed, this.speed / 2);
+                this.move([0, 1, 0, 1], this.speed, this.speed / 3);
                 break;
             case 'BL':
-                this.move([1, 0, 1, 0], this.speed / 2, this.speed);
+                this.move([1, 0, 1, 0], this.speed / 3, this.speed);
                 break;
             case 'BR':
-                this.move([1, 0, 1, 0], this.speed, this.speed / 2);
+                this.move([1, 0, 1, 0], this.speed, this.speed / 3);
                 break;
             case 'speed':
                 this.speed = +speed||0;

@@ -4,6 +4,7 @@
  */
 'use strict';
 const http   = require('http')
+const {spawn} = require('child_process')
 const IO     = require('socket.io');
 const Car = require('./car')
 const server = http.createServer();
@@ -27,11 +28,35 @@ io.on('connection', function connection(socket) {
     car.cameraCtrl(cmd)
     console.log('camera', cmd)
   })
+
+  socket.on('mjpg', function (cmd) {
+    console.log('mjpg', cmd)
+    try{
+      if(cmd === 'start'){
+        spawn('bash', ['../camera.sh'])
+        socket.send('mjpg start')
+      } else {
+        spawn('killall', ['mjpg_streamer'])
+        socket.send('mjpg stop')
+      }
+    } catch(e){console.log(e)}
+  })
   
 });
 
+process.on('uncaughtException', function() {
+  car.motorCmd('stop', 0);
+  spawn('killall', ['mjpg_streamer'])
+})
 
-server.listen(8086)
+process.on('SIGINT', function() {
+  car.motorCtrl('stop', 0)
+  spawn('killall', ['mjpg_streamer'])
+  process.exit(0)
+});
+
+
+server.listen(8087)
 
 console.log('websocket run')
 
