@@ -22,6 +22,7 @@
   "contributors": [],
   "license": "MIT",
   "dependencies": {
+    "hap-nodejs": "^0.4.36",
     "socket.io": "^2.0.4",
     "wiring-pi": "^2.2.1"
   }
