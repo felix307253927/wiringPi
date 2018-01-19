@@ -12,8 +12,12 @@ wpi.pinMode(pin, wpi.OUTPUT)
 
 
 while (1){
-    wpi.digitalWrite(6, 1)
-    wpi.delay(500)
-    wpi.digitalWrite(6, 0)
-    wpi.delay(500)
+    wpi.digitalWrite(pin, 1)
+console.log('HIGHT')
+    wpi.delay(1500)
+    wpi.digitalWrite(pin, 0)
+console.log('LOW')
+    wpi.delay(1500)
 }
+
+wpi.digitalWrite(pin, 1)
